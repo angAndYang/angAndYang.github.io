@@ -11,17 +11,108 @@
     overflow: hidden;
     background-repeat: no-repeat;
   }
-  .name {
+  .absolute {
     position: absolute;
-    z-index: 999;
+    width: 70%;
+    left: 16.9%;
+    top: 50%;
   }
+  .flex {
+    display: flex;
+    justify-content: space-between;
+  }
+  .flex > div {
+    color: white;
+    font-size: 50px;
+  }
+
 </style>
 <body>
-<h1 class="name man">张航</h1>
-<h1 class="name women">罗清清</h1>
+<div class="absolute">
+  <div class="flex">
+    <div style="color: #549FCD">张航</div>
+    <div class="theme">
+      <div id="time"></div>
+    </div>
+    <div style="color: #B23370">罗清清</div>
+  </div>
+</div>
 <canvas id="canvas" width="1400" height="600" style="background-color: white"></canvas>
 </body>
 <script>
+
+  //时间格式化
+  function dateFormat(fmt, date)
+  {
+    var ret;
+    var opt =
+            {
+              "y+": date.getFullYear().toString(),        // 年
+              "M+": (date.getMonth() + 1).toString(),     // 月
+              "d+": date.getDate().toString(),            // 日
+              "H+": date.getHours().toString(),           // 时
+              "m+": date.getMinutes().toString(),         // 分
+              "s+": date.getSeconds().toString()          // 秒
+              // 有其他格式化字符需求可以继续添加，必须转化成字符串
+            };
+    for (var k in opt)
+    {
+      ret = new RegExp("(" + k + ")").exec(fmt);
+      if (ret)
+      {
+        fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+      };
+    };
+    return fmt;
+  }
+  let loveTime = document.getElementById('time')
+  // let deadline =  '2018-1-1'
+  // deadline = new Date(deadline.replace(/-/g, "/"));
+  // let str_s1 = deadline.getFullYear()+"年"+(deadline.getMonth()+1)+"月"+deadline.getDate()+"日";
+  // let loveTime = document.getElementById('time')
+  // setInterval(function(){
+  //   s2 = new Date();
+  //   var time = s2.getTime() - str_s1.getTime();
+  //   var days = parseInt(time / (1000 * 60 * 60 *24));
+  //   var hours = parseInt(time / (1000 * 60 *60));
+  //   var mins = parseInt(time / (1000 *60));
+  //   var s = parseInt(time / (1000 ));
+  //   var ms = parseInt(time) ;
+  //   loveTime.innerHTML="<P style='color:white'>"+str_s1+"至今已经过了：</P>"+
+  //           "<P>"+days+"天</P>"+"<P>"+hours+"小时</P>"+"<P>"+mins+"分钟</P>"+"<P>"+s+"秒</P>"+"<P>"+ms+"毫秒</P>";
+  // },100);
+
+/*  setInterval(() => {
+    loveTime.innerText =dateFormat("yyyy-MM-dd HH:mm:ss",new Date());
+  }, 1)*/
+
+
+  function handlerDateDurationCurrent (time) {
+    let d1 = new Date(time)
+    let d2 = new Date()
+
+    let cha = Math.abs(d2.getTime() - d1.getTime())
+    let days = parseInt(cha / (24 * 60 * 60 * 1000))
+    let hours = parseInt(cha % (24 * 60 * 60 * 1000) / (60 * 60 * 1000))
+    let mins = parseInt(cha % (60 * 60 * 1000) / (60 * 1000))
+    let second = parseInt(cha % (60 * 1000) / 1000)
+    if (days) {
+      return ` ${days}天 ${hours}小时 ${mins}分钟 ${second}秒`
+    } else if (hours) {
+      return ` ${hours}小时 ${mins}分钟`
+    } else {
+      return ` ${mins}分钟`
+    }
+  }
+
+  let preDate = '2016-01-01 00:00:00'
+  let result = handlerDateDurationCurrent(preDate)
+  loveTime.innerText = result
+setInterval(() => {
+  result = handlerDateDurationCurrent(preDate)
+  loveTime.innerText = result
+},1000)
+  //画布
   var canvas = document.getElementById("canvas");
 
   canvas.width = window.innerWidth;
